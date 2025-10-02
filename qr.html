@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教室QRコード一覧</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f8f9fa;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .qr-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    .qr-item {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 200px;
+    }
+    .qr-item h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    img {
+      width: 180px;
+      height: 180px;
+    }
+  </style>
+</head>
+<body>
+  <h1>教室QRコード一覧</h1>
+  <div class="qr-container" id="qr-codes"></div>
+
+  <script>
+    // あなたの入力ページ（view.html）のURL
+    const BASE_URL = "https://izusho20253416-droid.github.io/saisinbann/";
+
+    // QRコードを作りたい部屋のリスト
+    const rooms = ["職員室", "会議室", "教室A", "教室B"];
+
+    const container = document.getElementById("qr-codes");
+
+    rooms.forEach(room => {
+      // URLパラメータ付きの入力ページ
+      const url = `${BASE_URL}?room=${encodeURIComponent(room)}`;
+
+      // Google Chart API でQRコード生成
+      const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(url)}`;
+
+      const div = document.createElement("div");
+      div.className = "qr-item";
+      div.innerHTML = `
+        <h2>${room}</h2>
+        <img src="${qrUrl}" alt="QR for ${room}">
+        <p><small>${room} 用</small></p>
+      `;
+      container.appendChild(div);
+    });
+  </script>
+</body>
+</html>

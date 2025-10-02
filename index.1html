@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>先生居場所一覧</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: 0 auto;
+      width: 95%;
+      max-width: 800px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    thead {
+      background: #4CAF50;
+      color: #fff;
+    }
+    th, td {
+      padding: 12px 15px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    tr:hover {
+      background: #f1f1f1;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 20px;
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    .update-time {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>先生居場所一覧</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>先生名</th>
+        <th>部屋名</th>
+        <th>コメント</th>
+        <th>更新日時</th>
+      </tr>
+    </thead>
+    <tbody id="data-body">
+      <tr><td colspan="4">読み込み中...</td></tr>
+    </tbody>
+  </table>
+
+  <div class="update-time" id="last-updated">更新中...</div>
+
+  <button onclick="goToInput()">先生の居場所を入力する</button>
+
+  <script>
+    const DATA_URL = "https://script.google.com/macros/s/AKfycbw4-NbydtVIHt8ckHyl6jJkT9S9jw0cTN44tf_udPYZvf_pdlgblvGPpAk51_10l2VX/exec";
+
+    async function loadData() {
+      try {
+        const res = await fetch(DATA_URL);
+        if (!res.ok) throw new Error("サーバーエラー");
+        const data = await res.json();
+        const tbody = document.getElementById('data-body');
+        tbody.innerHTML = '';
+
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${row.teacher}</td>
+            <td>${row.room}</td>
+            <td>${row.comment || ""}</td>
+            <td>${new Date(row.updated).toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById("last-updated").innerText =
+          "最終更新: " + new Date().toLocaleTimeString();
+
+      } catch (err) {
+        console.error(err);
+        document.getElementById('data-body').innerHTML =
+          `<tr><td colspan="4">データの取得に失敗しました</td></tr>`;
+      }
+    }
+
+    function goToInput() {
+      // 入力ページに遷移
+      window.location.href = "view.html";
+    }
+
+    loadData();
+    setInterval(loadData, 10000); // 10秒ごとに更新
+  </script>
+</body>
+</html>
